@@ -602,7 +602,20 @@
         script.async = true;
         script.defer = true;
         script.onload = setupGoogleSignIn;
+        script.onerror = () => {
+          showToast('Gagal memuat pustaka Google Sign-In. Periksa koneksi internet Anda atau matikan adblocker.', 'error');
+          showSignInButton();
+        };
         document.head.appendChild(script);
+
+        // Timeout Fallback: if loading doesn't complete in 5 seconds, trigger manual login view
+        setTimeout(() => {
+          if (document.getElementById('dashboard-section').classList.contains('hidden') && 
+              document.getElementById('google-signin-container').classList.contains('hidden')) {
+            showToast('Menghubungkan sesi berjalan lambat. Membuka panel masuk...', 'info');
+            showSignInButton();
+          }
+        }, 5000);
       }
       
       // Setup Clock
